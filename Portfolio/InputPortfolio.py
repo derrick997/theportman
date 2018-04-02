@@ -10,7 +10,7 @@ def portfolioManualInput():
     while (1):
         print("Stock number " + str(s_num))
         s_name = input("Stock name: ").strip()
-        s_symbol = input("Ticker symbol: ").strip()
+        s_symbol = input("Ticker symbol: ").strip().upper()
         s_price_bought = input("Price at buy: ").strip()
         s_price_bought_float = getNum(s_price_bought)
         s_shares_bought = input("Number of shares bought: ").strip()
@@ -35,6 +35,7 @@ def portfolioManualInput():
             stock_list.append(s_stock)
             s_num += 1
 
+        print()
         another = None
         while (another != "Y" and another != "y" and another != "N" and another != "n"):
             another = input("Add another stock? (Y/N): ")
@@ -46,39 +47,6 @@ def portfolioManualInput():
 
     return stock_list
 
-
-
-def savePortfolio(stock_list):
-
-    save = None
-    while (save != "Y" and save != "y" and save != "N" and save != "n"):
-        save = input("Save this portfolio? (Y/N): ")
-        save = save.strip()
-    if (save == "N" or save == "n"):
-        print("This portfolio will not be saved.")
-    else:
-        name_confirmation = None
-        first_try = True
-
-        while (name_confirmation != "Y" and name_confirmation != "y"):
-
-            if first_try:
-                name = input("Enter portfolio name: ")
-                first_try = False
-            else:
-                name = input("Please re-enter portfolio name: ")
-            name = name.strip()
-            print(name)
-
-            second_confirmation = None
-            while (second_confirmation != "Y" and second_confirmation != "y" and second_confirmation != "N" and second_confirmation != "n"):
-                second_confirmation = input('Is "' + name + '" correct? (Y/N): ')
-                second_confirmation = second_confirmation.strip()
-            if (second_confirmation == "N" or second_confirmation == "n"):
-                pass
-            else:
-
-                # Add code to save as file here
 
 def portfolioInputFromFile():
 
@@ -112,6 +80,16 @@ def portfolioInputFromFile():
                 ...
                 print(row['first_name'], row['last_name'])
 
+
+#Ask if the requested statement is to be collected, returns F if no, T otherwise
+def throwPromptFor(requested):
+    getRequested = None
+    while (getRequested != "Y" and getRequested != "y" and getRequested != "N" and getRequested != "n"):
+        getRequested = input("Would you like to get the " + requested.strip() + "? (Y/N): ").strip()
+    if (getRequested == "N" or getRequested == "n"):
+        return False
+    else:
+        return True
 
 
 '''

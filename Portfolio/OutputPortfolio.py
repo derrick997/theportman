@@ -1,4 +1,12 @@
 from termcolor import colored
+import csv
+from Stock import Stock
+import FinancialsCatcher
+import StockCatcher
+from openpyxl import Workbook
+from openpyxl.styles import Color, Fill
+from openpyxl.cell import Cell
+
 
 def printPortfolioSummary(stock_list):
 
@@ -9,8 +17,7 @@ def printPortfolioSummary(stock_list):
     total_gain = 0.00
 
     for stock in stock_list:
-        stock_str = stock.toString()
-        print(stock_str)
+        print(stock.quoteToString())
 
         total_paid += (stock.numberbought * stock.pricebought)
         total_current += (stock.numberbought * stock.price)
@@ -20,10 +27,10 @@ def printPortfolioSummary(stock_list):
 
         if gainloss<0:
             gainloss *= -1
-            print(colored("Loss per share so far: $(" + str(gainloss) + ")", "red") + "\n")
+            print(colored("Loss per share so far: $(" + str(gainloss) + ")", "red"))
             print(colored("Total loss so far: $(" + str(gainloss*stock.numberbought) + ")", "red") + "\n")
         else:
-            print(colored("Gain per share so far: $" + str(gainloss), "green") + "\n")
+            print(colored("Gain per share so far: $" + str(gainloss), "green"))
             print(colored("Total gain so far: $" + str(gainloss*stock.numberbought), "green") + "\n")
 
 
@@ -35,3 +42,132 @@ def printPortfolioSummary(stock_list):
         print(colored("Total current gain: $" + str(total_gain), "green") + "\n")
 
     print("-----End of summary-----")
+
+def listOfListsToXlsx(worksheet, datalist):
+    index = 1
+    for sublist in datalist:
+        subIndex = 1
+        for element in sublist:
+            address = chr(subIndex + 64) + str(index)
+            # print(address)
+            worksheet[address] = element
+            subIndex += 1
+        index += 1
+    return worksheet
+
+def savePortfolioAsXlsx(stock_list):
+
+    save = None
+    while (save != "Y" and save != "y" and save != "N" and save != "n"):
+        save = input("Save this portfolio as xlsx? (Y/N): ")
+        save = save.strip()
+    if (save == "N" or save == "n"):
+        print("This portfolio will not be saved.")
+    else:
+        for stock in stock_list:
+            filename = str(stock.getName()) + ".xlsx"
+            wb = Workbook()
+
+            worksheet_list = []
+
+            if (stock.getIS_numYearsAvailable() > 0):
+                ws1 = wb.create_sheet(title="Historical Income Statement")
+                ISList = stock.incomeStatementToListOfLists()
+                ws1 = listOfListsToXlsx(ws1, ISList)
+                worksheet_list.append(ws1)
+
+            if (stock.getBS_numYearsAvailable() > 0):
+
+                ws2 = wb.create_sheet(title="Historical Balance Sheet")
+                BSList = stock.balanceSheetToListOfLists()
+                ws2 = listOfListsToXlsx(ws2, BSList)
+                worksheet_list.append(ws2)
+
+            if (stock.getCF_numYearsAvailable() > 0):
+
+                CFList = stock.cashFlowStatementToListOfLists()
+                ws3 = wb.create_sheet(title="Historical Cash Flow Statement")
+                ws3 = listOfListsToXlsx(ws3, CFList)
+                worksheet_list.append(ws3)
+
+            # Auto adjust column widths
+            for worksheet in worksheet_list:
+                for column_cells in worksheet.columns:
+                    length = max(len(str(cell.value)) for cell in column_cells)
+                    worksheet.column_dimensions[column_cells[0].column].width = length
+
+            # Bold titles
+            '''boldList = ['A1', 'B3', 'C3', 'D3', 'A5', 'A11', 'A20', 'A30', 'A39']
+            for cellAddr in boldList:
+                _cell = ws1.cell(cellAddr)
+                _cell.style.font.bold = True'''
+
+            wb.save(filename=filename)
+
+            print("Your portfolio has been saved as " + filename)
+
+#Test for save xlsx
+'''stockList = []
+dominos = StockCatcher.getStockFromYahooFinance("MyDominosStocks", "DPZ", Stock())
+
+dominos = FinancialsCatcher.catchIncomeStatementFromYahooFinance(dominos)
+dominos = FinancialsCatcher.catchBalanceSheetFromYahooFinance(dominos)
+
+stockList.append(dominos)
+savePortfolioAsXlsx(stockList)'''
+
+
+def savePortfolioAsCsv(stock_list):
+
+    save = None
+    while (save != "Y" and save != "y" and save != "N" and save != "n"):
+        save = input("Save this portfolio as csv? (Y/N): ")
+        save = save.strip()
+    if (save == "N" or save == "n"):
+        print("This portfolio will not be saved.")
+    else:
+        for stock in stock_list:
+            #print(stock.incomeStatementToListOfLists())
+            filename = str(stock.getName()) + ".csv"
+            with open(filename, 'w') as portFile:
+                writer = csv.writer(portFile)
+                writer.writerows(stock.incomeStatementToListOfLists())
+            portFile.close()
+            print("Your portfolio has been saved as " + colored(filename, "yellow"))
+
+        # Add file name
+        ''' name_confirmation = None
+            first_try = True
+            while (name_confirmation != "Y" and name_confirmation != "y"):
+
+            if first_try:
+                name = input("Enter portfolio name: ")
+                first_try = False
+            else:
+                name = input("Please re-enter portfolio name: ")
+            name = name.strip()
+            print(name)
+
+            second_confirmation = None
+            while (second_confirmation != "Y" and second_confirmation != "y" and second_confirmation != "N" and second_confirmation != "n"):
+                second_confirmation = input('Is "' + name + '" correct? (Y/N): ')
+                second_confirmation = second_confirmation.strip()
+            if (second_confirmation == "N" or second_confirmation == "n"):
+                print("This portfolio will not be saved.")
+            else:
+                with open(name + '.csv', 'wb') as portFile:
+                    writer = csv.writer(portFile)
+                    
+                    for stock in stock_list:
+                        writer.writerows(stock.incomeStatementToListOfLists())
+
+                portFile.close()'''
+
+#Test for save csv
+'''stockList = []
+dominos = StockCatcher.getStockFromYahooFinance("MyDominosStocks", "DPZ", Stock())
+#print(dominos.quoteToString())
+dominos = FinancialsCatcher.getFinancialsFromYahooFinance(dominos)
+#print(dominos.financialToString())
+stockList.append(dominos)
+savePortfolio(stockList)'''

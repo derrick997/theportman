@@ -12,7 +12,7 @@ class TBond():
 
         string = "\n"
 
-        string = string + "-----TREASURY BOND RATES-----\n"
+        string = string + "-----TREASURY BOND YIELDS-----\n"
 
         string = string + "\nRetrieved on " + str(self.dateTime)
         string = string + "\n13 Wk Treasury Bill: " + str(self.getbill13Wk())
@@ -20,13 +20,13 @@ class TBond():
         string = string + "\n10 Yr Treasury Bond: " + str(self.getbond10Yr())
         string = string + "\n30 Yr Treasury Bond: " + str(self.getbond30Yr())
 
-        string = string + "\n\n-----END TREASURY BOND RATES-----"
+        string = string + "\n\n-----END TREASURY BOND YIELDS-----"
 
         return string
 
     def tBondToListOfLists(self):
 
-        title = "TREASURY BOND RATES"
+        title = "TREASURY BOND YIELDS"
 
         listOfLists = [[title], []]
 

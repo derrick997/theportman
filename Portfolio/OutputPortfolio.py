@@ -6,12 +6,13 @@ import StockCatcher
 from openpyxl import Workbook
 from openpyxl.styles import Color, Fill
 from openpyxl.cell import Cell
+import datetime
 
 
-def printPortfolioSummary(stock_list):
-
+def cumulativeHoldingAnalysisToString(stock_list):
+    
     print("-----Start of summary-----")
-
+    
     total_paid = 0.00
     total_current = 0.00
     total_gain = 0.00
@@ -25,23 +26,29 @@ def printPortfolioSummary(stock_list):
         gainloss = stock.price - stock.pricebought
         total_gain += gainloss
 
-        if gainloss<0:
+        if gainloss < 0:
             gainloss *= -1
             print(colored("Loss per share so far: $(" + str(gainloss) + ")", "red"))
-            print(colored("Total loss so far: $(" + str(gainloss*stock.numberbought) + ")", "red") + "\n")
+            print(colored("Total loss so far: $(" + str(gainloss * stock.numberbought) + ")", "red") + "\n")
         else:
             print(colored("Gain per share so far: $" + str(gainloss), "green"))
-            print(colored("Total gain so far: $" + str(gainloss*stock.numberbought), "green") + "\n")
-
+            print(colored("Total gain so far: $" + str(gainloss * stock.numberbought), "green") + "\n")
 
     print("Total portfolio cost: $" + str(total_paid))
     print("Total portfolio value: $" + str(total_current))
     if total_gain < 0:
-        print(colored("Total current loss: $(" + str(total_gain*-1) + ")", "red") + "\n")
+        print(colored("Total current loss: $(" + str(total_gain * -1) + ")", "red") + "\n")
     else:
         print(colored("Total current gain: $" + str(total_gain), "green") + "\n")
 
     print("-----End of summary-----")
+
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
 
 def listOfListsToXlsx(worksheet, datalist):
     index = 1
@@ -51,11 +58,14 @@ def listOfListsToXlsx(worksheet, datalist):
             address = chr(subIndex + 64) + str(index)
             # print(address)
             worksheet[address] = element
+            #print(type(element))
+            '''if (type(element) == float) or (type(element) == int):
+                worksheet[address].number_format'''
             subIndex += 1
         index += 1
     return worksheet
 
-def savePortfolioAsXlsx(stock_list):
+def savePortfolioAsXlsx(stock_list, bond_list, wacc_list):
 
     save = None
     while (save != "Y" and save != "y" and save != "N" and save != "n"):
@@ -67,28 +77,52 @@ def savePortfolioAsXlsx(stock_list):
         for stock in stock_list:
             filename = str(stock.getName()) + ".xlsx"
             wb = Workbook()
+            wb.guess_types = True
 
             worksheet_list = []
 
-            if (stock.getIS_numYearsAvailable() > 0):
-                ws1 = wb.create_sheet(title="Historical Income Statement")
-                ISList = stock.incomeStatementToListOfLists()
-                ws1 = listOfListsToXlsx(ws1, ISList)
+            ws0 = wb.active
+            ws0.title="Quote Analysis Summary"
+            ws0 = listOfListsToXlsx(ws0, stock.quoteToListOfLists())
+            #print(stock.quoteToListOfLists)
+            worksheet_list.append(ws0)
+
+            if (stock.getHoldingAnalysisList() != []):
+                ws1 = wb.create_sheet(title="Stock Holding Analysis")
+                ws1 = listOfListsToXlsx(ws1, stock.getHoldingAnalysisList())
                 worksheet_list.append(ws1)
+
+            if (stock.getIS_numYearsAvailable() > 0):
+                ws2 = wb.create_sheet(title="Historical Income Statement")
+                ISList = stock.incomeStatementToListOfLists()
+                ws2 = listOfListsToXlsx(ws2, ISList)
+                worksheet_list.append(ws2)
 
             if (stock.getBS_numYearsAvailable() > 0):
 
-                ws2 = wb.create_sheet(title="Historical Balance Sheet")
+                ws3 = wb.create_sheet(title="Historical Balance Sheet")
                 BSList = stock.balanceSheetToListOfLists()
-                ws2 = listOfListsToXlsx(ws2, BSList)
-                worksheet_list.append(ws2)
+                ws3 = listOfListsToXlsx(ws3, BSList)
+                worksheet_list.append(ws3)
 
             if (stock.getCF_numYearsAvailable() > 0):
 
                 CFList = stock.cashFlowStatementToListOfLists()
-                ws3 = wb.create_sheet(title="Historical Cash Flow Statement")
-                ws3 = listOfListsToXlsx(ws3, CFList)
-                worksheet_list.append(ws3)
+                ws4 = wb.create_sheet(title="Historical Cash Flow Statement")
+                ws4 = listOfListsToXlsx(ws4, CFList)
+                worksheet_list.append(ws4)
+
+            if (bond_list != None):
+
+                ws5 = wb.create_sheet(title="Treasury Bonds")
+                ws5 = listOfListsToXlsx(ws5, bond_list)
+                worksheet_list.append(ws5)
+
+            if (wacc_list != None):
+
+                ws6 = wb.create_sheet(title="WACC")
+                ws6 = listOfListsToXlsx(ws6, wacc_list)
+                worksheet_list.append(ws6)
 
             # Auto adjust column widths
             for worksheet in worksheet_list:
@@ -99,7 +133,7 @@ def savePortfolioAsXlsx(stock_list):
             # Bold titles
             '''boldList = ['A1', 'B3', 'C3', 'D3', 'A5', 'A11', 'A20', 'A30', 'A39']
             for cellAddr in boldList:
-                _cell = ws1.cell(cellAddr)
+                _cell = ws2`.cell(cellAddr)
                 _cell.style.font.bold = True'''
 
             wb.save(filename=filename)

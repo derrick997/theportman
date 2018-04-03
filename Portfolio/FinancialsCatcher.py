@@ -303,7 +303,6 @@ def catchCashFlowStatementFromYahooFinance(stockStruct, market=None, shortName=N
 
         CF_endDate_list.append(datetime.datetime.fromtimestamp(catchStatementNum(cashFlowStatement, "endDate")).date())
 
-        CF_endDate_list.append(catchStatementNum(cashFlowStatement, "endDate"))
         CF_netIncome_list.append(catchStatementNum(cashFlowStatement, "netIncome"))
         CF_depreciation_list.append(catchStatementNum(cashFlowStatement, "depreciation"))
         CF_changeToNetincome_list.append(catchStatementNum(cashFlowStatement, "changeToNetincome"))

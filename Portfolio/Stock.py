@@ -1,4 +1,4 @@
-from Formatting import listItemToString, addLabelAndAppend, nonlistItemToString
+from Formatting import listItemToString, addLabelAndAppend, nonlistItemToString, nonlistAddLabelAndAppend
 
 class Stock():
     def __init__(self):
@@ -16,6 +16,9 @@ class Stock():
         self.numberbought = 0
         self.pricebought = 0
         self.market = ""
+
+        #Holding Analysis
+        self.holdingAnalysisList = []
 
         #Income Statement
         self.IS_numYearsAvailable = 0
@@ -111,7 +114,8 @@ class Stock():
         self.CF_changeInCash_list = []
 
         #Valuation factors
-        self.perpetual_growth = None
+        self.perpetual_growth = 0
+        self.wacc = 0
 
 
     def quoteToString(self):
@@ -300,6 +304,36 @@ class Stock():
 
         return string
 
+    def quoteToListOfLists(self):
+
+        title = "QUOTE SUMMARY FOR " + self.getCompany().upper()
+
+        listOfLists = [[title], []]
+
+
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getName(), "Stock Name")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getCompany(), "Company")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getSymbol(), "Ticker Symbol")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getMarket(), "Stock Market")
+
+        listOfLists.append([])
+
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getDateTime(), "Last Updated")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getPrice(), "Stock Price$")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getBid(), "Bid Price$")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getAsk(), "Ask Price$")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getBeta(), "Equity Beta")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getDividends(), "Dividends")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getMarketcap(), "Market cap")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getEnterprisevalue(), "Enterprise Value")
+
+        listOfLists.append([])
+
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getPricebought(), "Price Bought")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getNumberbought(), "Shares Bought")
+
+        return listOfLists
+
     def incomeStatementToListOfLists(self):
 
         title = "INCOME STATEMENT FOR " + self.getCompany().upper()
@@ -359,7 +393,7 @@ class Stock():
 
         title = "BALANCE SHEET FOR " + self.getCompany().upper()
 
-        listOfLists = [[title], []]
+        listOfLists = [[title]]
 
         listOfLists.append([])
         listOfLists.append(["ASSETS"])
@@ -1028,4 +1062,16 @@ class Stock():
     def getPerpetual_growth(self):
         return self.perpetual_growth
 
+    def setWacc(self, wacc):
+        self.wacc = wacc
 
+    def getWacc(self):
+        return self.wacc
+
+
+
+    def setHoldingAnalysisList(self, holdingAnalysisList):
+        self.holdingAnalysisList = holdingAnalysisList
+
+    def getHoldingAnalysisList(self):
+        return self.holdingAnalysisList

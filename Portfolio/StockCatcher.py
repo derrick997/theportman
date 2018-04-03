@@ -3,8 +3,9 @@ from Web_Access import access, accessWithJavascript, accessWithBs
 from Read_Num_Str import getNextNum, readCharsUntil, catchStatementNum
 from Stock import Stock
 
-def getStockFromYahooFinance(stockName, symbol, stockStruct, market=None, shortName=None):
-    direccion = "https://finance.yahoo.com/quote/" + symbol + "?p=" + symbol
+def catchStockFromYahooFinance(stockStruct, market=None, shortName=None):
+
+    direccion = "https://finance.yahoo.com/quote/" + stockStruct.getSymbol() + "?p=" + stockStruct.getSymbol()
     currentPage = accessWithBs(direccion)
     #print(currentPage)
 
@@ -24,8 +25,6 @@ def getStockFromYahooFinance(stockName, symbol, stockStruct, market=None, shortN
     enterprisevalueVal = catchStatementNum(quoteSummary, "enterpriseValue")
 
     stockStruct.setCompany(companyVal)
-    stockStruct.setSymbol(symbol)
-    stockStruct.setName(stockName)
     stockStruct.setPrice(priceVal)
     stockStruct.setDateTime(timestamp())
     stockStruct.setBid(bidVal)

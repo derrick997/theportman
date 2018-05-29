@@ -1,4 +1,4 @@
-import datetime
+import datetime, calendar
 
 # FORMATO
 
@@ -291,3 +291,46 @@ def catchStatementNum(statement, keyString):
             return value
     else:
         return 0 #placeholder value if index not found
+
+# strip initial spaces, tabs and newline, return the modified string
+def startStrip(str):
+
+    if (str[0] != ' ') and (str[0] != '\t') and (str[0] != '\n'):
+        return str
+    else:
+        while (str[0] == ' '):
+            str = str[1:]
+        while (str[0] == '\t') or (str[0] == '\n'):
+            str = str[1:]
+        return startStrip(str)
+
+def addMonths(sourcedate, addMonths):
+    month = sourcedate.month - 1 + addMonths
+    year = sourcedate.year + month // 12
+    month = month % 12 + 1
+    day = min(sourcedate.day, calendar.monthrange(year, month)[1])
+    return datetime.date(year, month, day)
+
+#Read string until the endchar ("<") and convert "hello May 1, 2018<" to datetime struct (May 1, 2018)
+#formats here: https://docs.python.org/3.6/library/datetime.html#strftime-and-strptime-behavior
+def catchDateString(statement, keyString, dateinputformat, endchar):
+    valueIndex = statement.find(keyString)
+    if valueIndex != -1:
+        #valueIndex = valueIndex+1
+        value = readCharsUntil(statement, valueIndex + len(keyString), endchar)
+        #value = startStrip(value)
+        value = value.strip()
+        #datetime_object = datetime.datetime(*time.strptime(value, dateinputformat))
+        datetime_object = datetime.datetime.strptime(value, dateinputformat)
+        return datetime_object
+    else:
+        return 0  # placeholder value if index not found
+
+'''mystr = "hello June 5, 2018<"
+mydate = catchDateString(mystr, "hello", '%B %d, %Y', '<')
+print(mydate.date())
+print(mydate.month)
+print(mydate.year)'''
+
+
+

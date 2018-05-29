@@ -65,7 +65,7 @@ def listOfListsToXlsx(worksheet, datalist):
         index += 1
     return worksheet
 
-def savePortfolioAsXlsx(stock_list, bond_list, wacc_list):
+def savePortfolioAsXlsx(stock_list, wacc_list, economy_list):
 
     save = None
     while (save != "Y" and save != "y" and save != "N" and save != "n"):
@@ -112,10 +112,10 @@ def savePortfolioAsXlsx(stock_list, bond_list, wacc_list):
                 ws4 = listOfListsToXlsx(ws4, CFList)
                 worksheet_list.append(ws4)
 
-            if (bond_list != None):
+            if (economy_list != None):
 
-                ws5 = wb.create_sheet(title="Treasury Bonds")
-                ws5 = listOfListsToXlsx(ws5, bond_list)
+                ws5 = wb.create_sheet(title="Economic Indicators")
+                ws5 = listOfListsToXlsx(ws5, economy_list)
                 worksheet_list.append(ws5)
 
             if (wacc_list != None):

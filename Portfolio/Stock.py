@@ -114,7 +114,6 @@ class Stock():
         self.CF_changeInCash_list = []
 
         #Valuation factors
-        self.perpetual_growth = 0
         self.wacc = 0
 
 
@@ -319,9 +318,9 @@ class Stock():
         listOfLists.append([])
 
         listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getDateTime(), "Last Updated")
-        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getPrice(), "Stock Price$")
-        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getBid(), "Bid Price$")
-        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getAsk(), "Ask Price$")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getPrice(), "Stock Price")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getBid(), "Bid Price")
+        listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getAsk(), "Ask Price")
         listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getBeta(), "Equity Beta")
         listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getDividends(), "Dividends")
         listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getMarketcap(), "Market cap")
@@ -331,6 +330,8 @@ class Stock():
 
         listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getPricebought(), "Price Bought")
         listOfLists = nonlistAddLabelAndAppend(listOfLists, self.getNumberbought(), "Shares Bought")
+
+        #print(listOfLists)
 
         return listOfLists
 
@@ -1053,20 +1054,6 @@ class Stock():
 
     def getCF_changeInCash_list(self):
         return self.CF_changeInCash_list
-
-    """Calculation values"""
-
-    def setPerpetual_growth(self, perpetual_growth):
-        self.perpetual_growth = perpetual_growth
-
-    def getPerpetual_growth(self):
-        return self.perpetual_growth
-
-    def setWacc(self, wacc):
-        self.wacc = wacc
-
-    def getWacc(self):
-        return self.wacc
 
 
 

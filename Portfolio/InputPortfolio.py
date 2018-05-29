@@ -85,17 +85,7 @@ def portfolioInputFromFile():
 def throwPromptFor(requested):
     getRequested = None
     while (getRequested != "Y" and getRequested != "y" and getRequested != "N" and getRequested != "n"):
-        getRequested = input("Would you like to get the " + requested.strip() + "? (Y/N): ").strip()
-    if (getRequested == "N" or getRequested == "n"):
-        return False
-    else:
-        return True
-
-#Ask if the requested statement is to be collected, returns F if no, T otherwise, "INPUT A DIFFERENT"
-def throwPromptForDifferentInput(requested):
-    getRequested = None
-    while (getRequested != "Y" and getRequested != "y" and getRequested != "N" and getRequested != "n"):
-        getRequested = input("Would you like to input a different " + requested.strip() + "? (Y/N): ").strip()
+        getRequested = input("Would you like to " + requested.strip() + "? (Y/N): ").strip()
     if (getRequested == "N" or getRequested == "n"):
         return False
     else:

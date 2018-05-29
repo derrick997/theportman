@@ -2,9 +2,7 @@ import InputPortfolio
 import StockCatcher
 import FinancialsCatcher
 import OutputPortfolio
-import BondsCatcher
 import DCFValuation
-from TBond import TBond
 from Stock import Stock
 import StockHoldingAnalysis
 
@@ -14,7 +12,7 @@ portfolio_main = []
 print()
 
 #Merge input info with current data, and create main list
-if InputPortfolio.throwPromptFor("Quote Analysis Summary"):
+if InputPortfolio.throwPromptFor("get the Quote Analysis Summary"):
     portfolio_main_quote = []
     for stock in portfolio_in_list:
         stock = StockCatcher.catchStockFromYahooFinance(stock)
@@ -24,7 +22,7 @@ if InputPortfolio.throwPromptFor("Quote Analysis Summary"):
 
 print()
 
-if InputPortfolio.throwPromptFor("Analysis of Holding"):
+if InputPortfolio.throwPromptFor("get the Analysis of Holding"):
     portfolio_main_Holding = []
     for stock in portfolio_in_list:
         stock, analysisString = StockHoldingAnalysis.stockHoldingAnalysis(stock)
@@ -34,7 +32,7 @@ if InputPortfolio.throwPromptFor("Analysis of Holding"):
 
 print()
 
-if InputPortfolio.throwPromptFor("Historical Income Statements"):
+if InputPortfolio.throwPromptFor("get the Historical Income Statements"):
     portfolio_main_IS = []
     for stock in portfolio_main:
         stock = FinancialsCatcher.catchIncomeStatementFromYahooFinance(stock)
@@ -44,7 +42,7 @@ if InputPortfolio.throwPromptFor("Historical Income Statements"):
 
 print()
 
-if InputPortfolio.throwPromptFor("Historical Balance Sheets"):
+if InputPortfolio.throwPromptFor("get the Historical Balance Sheets"):
     portfolio_main_BS = []
     for stock in portfolio_main:
         stock = FinancialsCatcher.catchBalanceSheetFromYahooFinance(stock)
@@ -54,7 +52,7 @@ if InputPortfolio.throwPromptFor("Historical Balance Sheets"):
 
 print()
 
-if InputPortfolio.throwPromptFor("Historical Cash Flow Statements"):
+if InputPortfolio.throwPromptFor("get the Historical Cash Flow Statements"):
     portfolio_main_CF = []
     for stock in portfolio_main:
         stock = FinancialsCatcher.catchCashFlowStatementFromYahooFinance(stock)
@@ -67,23 +65,17 @@ print()
 tbonds_list = None
 waccListOfLists = None
 
-if InputPortfolio.throwPromptFor("DCF Analysis"):
-
-    if InputPortfolio.throwPromptFor("Treasury Bond Yields"):
-        tbonds = BondsCatcher.catchBondFromYahooFinance(TBond())
-        print(tbonds.tBondToString())
-        tbonds_list = tbonds.tBondToListOfLists()
+if InputPortfolio.throwPromptFor("perform a DCF Analysis"):
 
     portfolio_main_DCF = []
     for stock in portfolio_main:
         portfolio_main_DCF = []
-        stock, waccListOfLists = DCFValuation.calculateDCF(stock)
+        stock, waccListOfLists, economyListOfLists = DCFValuation.calculateDCF(stock)
         #print(stock.cashFlowStatementToString())
         portfolio_main_DCF.append(stock)
     portfolio_main = portfolio_main_DCF
 
-#OutputPortfolio.savePortfolioAsCsv(portfolio_main)
-OutputPortfolio.savePortfolioAsXlsx(portfolio_main, tbonds_list, waccListOfLists)
+OutputPortfolio.savePortfolioAsXlsx(portfolio_main, tbonds_list, waccListOfLists, economyListOfLists)
 
 #OutputPortfolio.printPortfolioSummary(portfolio_main)
 

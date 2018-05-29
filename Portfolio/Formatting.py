@@ -20,5 +20,5 @@ def nonlistItemToString(string, nonlistItem, label):
     return string
 
 def nonlistAddLabelAndAppend(listOfLists, nonlistGetter, label):
-    list = [label, nonlistGetter]
+    listOfLists.append([label, nonlistGetter])
     return listOfLists

@@ -14,14 +14,14 @@ from Formatting import nonlistItemToString
 
 def calculateDCF(stockStruct):
 
-    waccListOfLists, waccInUse, economyListOfLists = calculateWacc(stockStruct)
+    waccListOfLists, waccInUse, economyListOfLists, stockRatesListOfLists = calculateWacc(stockStruct)
 
     if InputPortfolio.throwPromptFor("use a different WACC"):
         newWacc = float(input("Enter a wacc: "))
         waccListOfLists.append(["Inputted WACC", newWacc])
         waccInUse = newWacc
 
-    terminalValueListOfLists, economyListOfLists = calculateTerminalValue(stockStruct, waccInUse, economyListOfLists)
+    terminalValueListOfLists, stockRatesListOfLists = calculateTerminalValue(stockStruct, waccInUse, economyListOfLists, stockRatesListOfLists)
 
     #calculate terminal value
     #...
@@ -30,6 +30,7 @@ def calculateDCF(stockStruct):
 
 def calculateWacc(stockStruct):
 
+    #print(stockStruct.getName())
     print("\nLet's start with calculating the WACC.")
 
     economy_list = []
@@ -95,18 +96,20 @@ def calculateWacc(stockStruct):
 
     print(waccToString)
 
-    return listOfLists, wacc, economy_list
+    return listOfLists, wacc, economy_list, listOfLists
 
 #def calculateShortTermExpectedFCF(stockStruct, wacc, economyListOfLists):
 
 
-def calculateTerminalValue(stockStruct, wacc, economyListOfLists):
+def calculateTerminalValue(stockStruct, wacc, economyListOfLists, stockRatesListOfLists):
+
+    #print(stockRatesListOfLists)
 
     print("\nLastly, let's calculate terminal value.")
     print()
 
     if InputPortfolio.throwPromptFor("get the projected Inflation Rates"):
-        inflation = InflationCatcher.catchInflationFrom_________(Inflation())
+        inflation = InflationCatcher.catchInflationFromIMF(Inflation())
         print(inflation.inflationToString())
         for inflation_element in inflation.inflationToListOfLists():
             economyListOfLists.append(inflation_element)
@@ -125,38 +128,41 @@ def calculateTerminalValue(stockStruct, wacc, economyListOfLists):
 
     listOfLists = [[]]
 
-    waccToString = "\n-----START OF WACC CALCULATION-----\n"
+    waccToString = "\n-----START OF TERMINAL VALUE CALCULATION-----\n"
 
-    waccToString = nonlistItemToString(waccToString, riskFreeRate, "Risk Free Rate")
-    waccToString = nonlistItemToString(waccToString, stockStruct.getBeta(), "Levered Beta")
-    waccToString = nonlistItemToString(waccToString, marketRiskPremium, "Market Risk Premium")
-    waccToString = nonlistItemToString(waccToString, costOfEquity, "Cost of Equity")
-
-    waccToString = waccToString + "\n"
-
-    waccToString = nonlistItemToString(waccToString, costOfDebt, "Cost of Debt")
-    waccToString = nonlistItemToString(waccToString, taxRate, "Tax Rate")
+    waccToString = nonlistItemToString(waccToString, stockRatesListOfLists[2][1], "Risk Free Rate")
+    waccToString = nonlistItemToString(waccToString, stockRatesListOfLists[3][1], "Levered Beta")
+    waccToString = nonlistItemToString(waccToString, stockRatesListOfLists[4][1], "Market Risk Premium")
+    waccToString = nonlistItemToString(waccToString, stockRatesListOfLists[5][1], "Cost of Equity")
 
     waccToString = waccToString + "\n"
 
-    waccToString = nonlistItemToString(waccToString, weightOfEquity, "Weight of Equity")
-    waccToString = nonlistItemToString(waccToString, weightOfDebt, "Weight of Debt")
-    waccToString = nonlistItemToString(waccToString, wacc, "Calculated WACC")
+    waccToString = nonlistItemToString(waccToString, stockRatesListOfLists[7][1], "Cost of Debt")
+    waccToString = nonlistItemToString(waccToString, stockRatesListOfLists[8][1], "Tax Rate")
 
-    waccToString = waccToString + "\n\n-----END OF WACC CALCULATION-----\n"
+    waccToString = waccToString + "\n"
+
+    waccToString = nonlistItemToString(waccToString, stockRatesListOfLists[10][1], "Weight of Equity")
+    waccToString = nonlistItemToString(waccToString, stockRatesListOfLists[11][1], "Weight of Debt")
+
+    waccToString = waccToString + "\n"
+
+    waccToString = nonlistItemToString(waccToString, stockRatesListOfLists[13][1], "Calculated WACC")
+
+    waccToString = waccToString + "\n\n-----END OF TERMINAL VALUE CALCULATION-----\n"
 
     print(waccToString)
 
-    return listOfLists, economyListOfLists
+    return listOfLists, stockRatesListOfLists
 
 
-'''stock = Stock()
+"""stock = Stock()
 stock.setSymbol("DPZ")
 stock = StockCatcher.catchStockFromYahooFinance(stock)
 stock = FinancialsCatcher.catchBalanceSheetFromYahooFinance(stock)
 stock = FinancialsCatcher.catchIncomeStatementFromYahooFinance(stock)
 stock = FinancialsCatcher.catchCashFlowStatementFromYahooFinance(stock)
-calculateDCF(stock)'''
+calculateDCF(stock)"""
 
 
 '''

@@ -6,10 +6,11 @@ import DCFValuation
 from Stock import Stock
 import StockHoldingAnalysis
 
+
 #Prompt for user input
 portfolio_in_list = InputPortfolio.portfolioManualInput()
 portfolio_main = []
-print()
+
 
 #Merge input info with current data, and create main list
 if InputPortfolio.throwPromptFor("get the Quote Analysis Summary"):
@@ -71,7 +72,7 @@ if InputPortfolio.throwPromptFor("perform a DCF Analysis"):
     for stock in portfolio_main:
         portfolio_main_DCF = []
         stock, waccListOfLists, economyListOfLists = DCFValuation.calculateDCF(stock)
-        #print(stock.cashFlowStatementToString())
+        print(stock.cashFlowStatementToString())
         portfolio_main_DCF.append(stock)
     portfolio_main = portfolio_main_DCF
 

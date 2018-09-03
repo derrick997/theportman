@@ -9,7 +9,16 @@ def catchInflationFromIMF(InflationStruct):
     # Descarga temporalmente al archivo excel, copia los contenidos relevantes al table "values", y elimina el archivo
     direccion = "http://www.imf.org/external/datamapper//export/excel.php?indicator=PCPIPCH&geoitems=USA"
     urllib.request.urlretrieve(direccion, "US_inflation.xls")
-    wb = open_workbook('US_inflation.xls')
+    try:
+        wb = open_workbook('US_inflation.xls')
+
+    except:
+        try:
+            urllib.request.urlretrieve(direccion, "US_inflation.xls")
+            wb = open_workbook('US_inflation.xls')
+        except:
+            urllib.request.urlretrieve(direccion, "US_inflation.xls")
+            wb = open_workbook('US_inflation.xls')
 
     years = []
     rates = []
@@ -19,7 +28,7 @@ def catchInflationFromIMF(InflationStruct):
         for name, col in zip(col_names, range(s.ncols)):
             value = (s.cell(0, col).value)
             try:
-                value = str(value)
+                value = int(value)
             except:
                 pass
             years.append(value)
@@ -57,3 +66,4 @@ def catchInflationFromIMF(InflationStruct):
 
     return InflationStruct
 
+#print(catchInflationFromIMF(Inflation()).InflationToString())
